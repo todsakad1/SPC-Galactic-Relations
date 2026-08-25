@@ -513,9 +513,9 @@ footer#file-footer{
 <script src="assets-database.js"></script>
 <script>
 /* ============================================================
-   EDIT THESE TWO LINES for your own branding
+   random branding shit
    ============================================================ */
-const LOGO_URL = "";              // <<< PUT YOUR GOC LOGO IMAGE URL HERE >>>
+const LOGO_URL = "https://cdn.discordapp.com/attachments/1008242937399881769/1541761231663145011/EMBLEMnobacking.png?ex=6a8ec48a&is=6a8d730a&hm=3bf0aa86588b975183e0f0d9af6029b9a46e31f68db9e4addccf003e2c8a1794&";       
 const CHART_DESCRIPTION =
 `Chart data compiled by the UN:GOC, authorised by the PSYCHE Division. 
 
@@ -608,128 +608,124 @@ const NATIONS = {
   'cuh-concord': { name:'Cuh Concord', formal:null, controller:'unknown', category:'uncontacted',
     location:'Approx. E Caldera', nationType:'Normal Nation', uncontacted:true,
     ethics:[], civics:[], origin:'[NO DATA]', authority:'None',
-    badges:[], description:'' },
+    badges:[], description:'This spacefaring civilization has yet to be contacted, nor discovered. However, archives taken from [ DATA EXPUNGED ] have indicated that they are located around Eastern Caldera, putting them within the scope of the Shattered Fragments. Their usage of "Concord" in their name, could be deducted that they have strong unity between the people and the government, likely being an oligarchy or a democracy.' },
 
   'whitesworth': { name:'Whitesworth', formal:'Lordship of Whitesworth', controller:'unknown', category:'uncontacted',
     location:'Approx. W Caldera', nationType:'Normal Nation', uncontacted:true,
     ethics:[], civics:[], origin:'[NO DATA]', authority:'None',
-    badges:[], description:'' },
+    badges:[], description:'Almost nothing is known beyond their apparent presence in Western Caldera. The title ‘Lordship’ has led analysts to speculate that Whitesworth is governed through some form of hereditary nobility, although this remains unconfirmed.' },
 
   'teapots': { name:'Teapots of Utopia', formal:null, controller:'player', category:'galcomm',
     location:'SW Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Xenophile','Spiritualist'],
     civics:['Galactic Curators','Crusader Spirit'],
     origin:'Starlit Pilgrimmage', authority:'Imperial',
-    badges:[], description:'' },
+    badges:[], description:'The Teapots of Utopia, a Theocratic Monarchy, is a nation located in Southwestern Caldera. They hold generally positive relations with most of the wider galactic community, all while hosting the Presiding Court of the Southwestern Co-Prosperity Sphere. This nation prioritises research as its main goal — shown through their nationwide usage of space laboratories, all while holding a fairly small military force, a prime example of their Fanatic Xenophilia likely influence the lack off reasons to hold one.' },
 
   'radiant': { name:'Radiant', formal:null, controller:'player', category:'galcomm',
     location:'N Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Militarist','Materialist'],
     civics:['Technocracy','Masterful Crafters'],
     origin:'Throne of Stars', authority:'Imperial',
-    badges:[], description:'' },
+    badges:[], description:'Radiant is a UN:GOC Wayward State, located in North Caldera. Generally classified as an "Illuminated Autocracy", this government is a materialistic form of hereditary autocracy, based on technocratic principles that the sovereign is sworn to uphold. Nothing is valued more highly than scientific knowledge and the advancement of technology. They hold a relatively strong navy, being its largest form of hard power, whereas their economy does not hold much as a contributing factor to overall power. They serve as the front to the genocidal and crisis-seeking nation of Neutrekiana.' },
 
   'ashikam': { name:'Ashikam Collective', formal:'Ashikam Collective Consciousness', controller:'player', category:'galcomm',
     location:'SE Caldera', nationType:'Normal Nation',
     ethics:['Gestalt Consciousness'],
     civics:['[DATA EXPUNGED]'],
     origin:'[DATA EXPUNGED]', authority:'Hivemind',
-    badges:[], description:'' },
+    badges:[], description:'This hivemind is rather unique compared to what exists in old galactic archives. Each drone holds have some form of autonomy, yet still utilize synaptic impulses to ensure order and fulfill the needs of the Central Hivemind. They are quite interesting in terms of military composition, utilizing space fauna rather than traditional ships. They also house an avian population that is not connected to the central hivemind.' },
 
   'celestararchatean': { name:'Celestararchatean Empire', formal:'Holy Remnants of Celestararchatean Empire', controller:'player', category:'crisis',
     location:'[NO DATA]', nationType:'Crisis Entity',
     ethics:['Gestalt Consciousness'],
     civics:[],
     origin:'Subspace Vanguard', authority:'Hivemind',
-    badges:[], description:'' },
+    badges:[], description:'This entity, also known as KTE-9777 by the UN:GOC. Their drone population does nothing but seek to fulfill the endless hunger of the Central Hivemind. They are a branch of the Prethoryn Scourge, acting as a vanguard force within the Calderan Galaxy. It is theorized that they communicate with the true hivemind of the Scourge outside of the galaxy through some mix of psionic-synaptic impulses. They are not to be negotiated with and will consider any nation it sights a hostile and any nation that is to meet them should assume the same about them.' },
 
   'malaysia': { name:'Malaysia', formal:'Northern Republic of Malaysia', controller:'player', category:'galcomm',
     location:'NW Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Xenophobe','Egalitarian'],
     civics:['Maid Nation','[DATA EXPUNGED]'],
     origin:'[DATA EXPUNGED]', authority:'Democracy',
-    badges:[], description:'' },
+    badges:[], description:'The Northern Republic of Malaysia, a sister nation to the Southern Republic of Singapore, are a Representative Democracy that share a parliamentary and faction system with the Singaporeans. They however, have their own politics of electing a leader, along with being incredibly Xenophobic in comparison to their Singaporean counterparts. They hold an incredibly large military force, being one of the largest contributors to the UN:GOC\'s direct navy.' },
 
   'singapore': { name:'Singapore', formal:'Southern Republic of Singapore', controller:'player', category:'galcomm',
     location:'NW Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Pacifist','Egalitarian'],
     civics:['[DATA EXPUNGED]'],
     origin:'[DATA EXPUNGED]', authority:'Democracy',
-    badges:[], description:'' },
+    badges:[], description:'The Southern Republic of Singapore, a sister nation to the Northern Republic of Malaysia, is considered a "Moral Democracy". They are firmly guided by moralist principles and non-violence. However, they have accumulated enough military power that violating its principles doesn\'t mean they are incapable of violence, they are the President State of the UN:GOC afterall. This holds especially true as they utilize a remarkably strong fleet, that boasts an impressive history as shown through their contributions within the Imperium civil war. Hence, the fact that they are Fanatic Pacifists should not make them a force to be ignored.' },
 
   'yaochi': { name:'Yaochi', formal:'Dynasty of Yaochi', controller:'player', category:'galcomm',
     location:'SW Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Pacifist','Egalitarian'],
     civics:['[DATA EXPUNGED]'],
     origin:'[DATA EXPUNGED]', authority:'Democracy',
-    badges:[], description:'' },
+    badges:[], description:'The Dynasty of Yaochi is a nation generally defined as a Catalytic Command. Power is concentrated elite class endowed with superior genetic mutations, granting them unparalleled authority. Operating beyond the confines of ordinary law, they wield their abilities to protect and guide society, taking whatever actions are deemed necessary to ensure its survival and prosperity. These elites are known as Great Families, even having their own mercenary groups to perform acts that they require. They the largest military force within the Southwestern Co-Prosperity Sphere, and are definitely able to stand the ground of their entire federation.' },
 
   'neko': { name:'New Era Keeping Order', formal:null, controller:'player', category:'galcomm',
     location:'E Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Militarist','Materialist'],
     civics:['Relentless Industrialists','Reanimators'],
     origin:'Post Apocalyptic', authority:'Imperial',
-    badges:[], description:'' },
+    badges:[], description:'This "Order" is a nation defined its militaristic form of autocracy, with the ruler serving as the undisputed head of the military which is firmly in control of the state apparatus. Their entire ideology revolves around the ruthless industrialization of every single planet, essentially turning their planets completely uninhabitable to any other populace. However, their origin characterized by a major fallout creates the adaptation for them to be able to tolerate and even strive in this inhospitable conditions.' },
 
   'igseis': { name:'Igseis', formal:null, controller:'player', category:'galcomm',
     location:'SW Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Xenophile','Materialist'],
     civics:['[DATA EXPUNGED]'],
     origin:'Syncretic Evolution', authority:'Oligarchy',
-    badges:[], description:'' },
+    badges:[], description:'Igseis is a nation ran by a Executive Committee, in which they govern the state and guides the citizenry towards productive and meaningful goals. As a S.C.O.P.E member, they are relatively underdeveloped compared to their fellow federation members, however, with recent funding from [ DATA EXPUNGED ], they may prove to be able to rise to the top.' },
 
   'sharpia': { name:'Sharpia', formal:null, controller:'player', category:'galcomm',
     location:'NW Caldera', nationType:'Normal Nation',
     ethics:['Egalitarian','Materialist','Militarist'],
     civics:['Technocracy','Beacon of Liberty'],
     origin:'Scion', authority:'Democracy',
-    badges:[], description:'' },
+    badges:[], description:'The Scion of the Imari Conservers, are diehard materialists that have suffered major losses from the Prethoryn Scourge. Their populace and entire habitable sphere was nearly wiped out by the Scourge, however, thanks to their overlords, they were able to recoup with their losses and eventually reestablish their nation as a certainly strong one. They are governed by a Rationale Consensus, which elects Presidents and is governed according to principles based on rationality and scientific theory.' },
 
   'neutrekiana': { name:'Neutrekiana', formal:null, controller:'player', category:'independent',
     location:'N Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Xenophobe','Militarist'],
     civics:['Fanatic Purifiers','Reanimators'],
     origin:'Endbringers', authority:'Oligarchy',
-    badges:['Hostile Independent'], description:'' },
+    badges:['Hostile Independent'], description:'This stellar empire is one that seeks out complete and utter destruction. Inviting "Wretched Demons" as the Watchers call them into our realm, along with purging any and all forms of sentient alien life. The ones that spearhead the entire operation are classified as a Purification Committee, a form of rabidly xenophobic oligarchy, where they have been set up to oversee the extermination of all "lesser" species in the galaxy. However, one question has stunned PSYCHE Division Analysts, "Why do they believe destruction is a neccesity?"' },
 
   'index': { name:'The Index', formal:'Pathwalkers of the Index', controller:'player', category:'galcomm',
     location:'NW Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Pacifist','Xenophobe'],
     civics:['Meritocracy','Ascensionists','[DATA EXPUNGED]'],
     origin:'[DATA EXPUNGED]', authority:'Oligarchy',
-    badges:[], description:'' },
+    badges:[], description:'ot much is known about how their internal politics work, even by their closest allies. However, one thing that can be sure is that the entire government and society is controlled by "The Index", a powerful group that writes and issues prescripts to other nations in the galaxy, while also determining national decisions through them. Despite being apart of the UN:GOC and even contributing a decently large naval component to it, they hold some form of isolation from the wider galactic community, only choosing to interact with certain deals.' },
 
   'paul': { name:'Paul', formal:null, controller:'player', category:'galcomm',
     location:'SW Caldera', nationType:'Normal Nation',
     ethics:['Fanatic Materialist','Authoritarian'],
     civics:['Corvee System','Technocracy'],
     origin:'Prosperous Unification', authority:'Dictatorship',
-    badges:[], description:'' }
+    badges:[], description:'This spacefaring civilization is a incredibly young one. Whilst most other stellar empires reached FTL travel decades ago, they have only just been able to reach the stars. Upon establishing a proper starbase for their systems, they were then contacted by aliens they were barely knowledgeable of, who are revealed as the Teapots of Utopia. Not much else is known about this civilization due to the limited contacted period, however they are easily defined as a Technocratic Dictatorship.' }
 };
 
 /* ============================================================
-   FEDERATIONS  (leader is drawn centre-of-cluster automatically)
+   yayyy all the federations  (leader is drawn centre-of-cluster automatically)
    ============================================================ */
-/* ============================================================
-   FEDERATIONS  (leader is drawn centre-of-cluster automatically)
-   govType: shown as a badge on the federation card/panel — edit
-            freely, it's just a label (e.g. 'Hegemony').
-   description: shown in the federation's info panel, same idea
-            as a nation's description field — write it directly
-            here, not live in the browser (see notes elsewhere
-            in this file re: static-site persistence).
-   ============================================================ */
+
 const FEDERATIONS = {
   ungoc: { id:'ungoc', name:'Union of Nations: Galactic Occult Coalition', short:'UN:GOC',
-    govType:'Hegemony', description:'',
+    govType:'Hegemony', description:`Charter Document: https://docs.google.com/document/d/19cuN1kyma2RCPDyG-vlLvCXzQttzqqTMTttuZKziMhA/edit?usp=sharing
+    
+    This federation is dedicated to the protection of humanity and destruction of any crisis that is to step into the Calderan Galaxy. Their charter and behaviour showcases that they follow something known as the "Fivefold Mission", whereas they prioritise things they deem important in a specific order. The Coalition can be generally described as rather amicable and is willing to cooperate with others to destroy any threats to the galaxy. This is accompanied with the fact they are actively looking for new members to induct into their federation, whilst seemingly staying out of Southwestern Caldera, likely out of respect for the S.C.O.P.E's borders.`,
     leader:'singapore', members:['radiant','malaysia','ashikam','neko','index'], associates:['exalted-veny'] },
   scope: { id:'scope', name:'Southwest Co-Prosperity Entente', short:'S.C.O.P.E.',
-    govType:'Holy Covenant', description:'',
+    govType:'Holy Covenant', description:`Entente Treaty: https://docs.google.com/document/d/1I0MnzzRzANadx_z3LQ_UmzdB8WpgSNuQfiX_6Z5M5As/edit?usp=drivesdk
+    
+    This federaiton is dedicated to the mutual economic development and unification of the Southwestern quarter of the galaxy. They hold minimal military cooperation, however have pledged to defend one another during times of crisis. Recently, there was an incident between the UN:GOC where one of they had "overstepped" their reach — an agreement formed between Yaochi and Singapore — and invited now-UN:GOC member "Ashikam Collective Conscioussness" into the federation, heavily disrupting the trust between the UN:GOC and the S.C.O.P.E.`,
     leader:'teapots', members:['yaochi','igseis'], associates:[] }
 };
 
 /* ============================================================
-   EXPLICIT RELATION EDGES  — yes, you edit this by hand.
+   For anyone curious enough to know how this bullshit works, claude explains it like this
    ------------------------------------------------------------
    Every line is one relationship: {a:'id', b:'id', type:'...'}.
    - Order of a/b doesn't matter — every type here is drawn as
@@ -864,7 +860,10 @@ const EDGES = [
   {a:'singapore', b:'igseis', type:'commercial'},
 
   // Yaochi
-  {a:'yaochi', b:'igseis', type:'commercial'}
+  {a:'yaochi', b:'igseis', type:'commercial'},
+
+   // UNGOC
+  {a:'fed:ungoc', b:'fed:scope', type:'tense'}
 ];
 
 /* ============================================================
@@ -886,8 +885,8 @@ const RELATION_TYPES = [
 const REL_META = Object.fromEntries(RELATION_TYPES.map(r=>[r.id,r]));
 
 const AUTHORITY_COLORS = {
-  'Imperial':'#d4574a','Democracy':'#4a9eda','Oligarchy':'#9b7fd4','Dictatorship':'#e2793d',
-  'Hivemind':'#e0c23c','Machine Intelligence':'#4fd1c5','None':'#7a8290'
+  'Imperial':'#d4574a','Democracy':'#69b729','Oligarchy':'#b49718','Dictatorship':'#ba6717',
+  'Hivemind':'#e0c23c','Machine Intelligence':'#0bd9c7','None':'#7a8290'
 };
 
 /* ============================================================
@@ -902,17 +901,29 @@ function isGestalt(id){ return hasEthicSubstr(id,'Gestalt'); }
 function buildFinalEdges(){
   const list = EDGES.slice();
 
-  // --- Dynamic: UN:GOC "migration pacts with all UN:GOC members" ---
-  // (excludes Ashikam — Gestalt-banned from migration, overrules its own claim)
-  const fed = FEDERATIONS.ungoc;
-  const roster = [fed.leader, ...fed.members].filter(id => !isGestalt(id));
-  for(let i=0;i<roster.length;i++){
-    for(let j=i+1;j<roster.length;j++){
-      list.push({a:roster[i], b:roster[j], type:'migration'});
-    }
-  }
+function buildFinalEdges(){
+  const list = EDGES.slice();
 
-  // --- Dynamic: Exalted Veny "tense with ALL MATERIALISTS" ---
+  // Relation types Gestalt-ethic nations can never form. double dipped enforced, i've been dipping in chocolate
+  const GESTALT_BANNED_TYPES = new Set(['migration','commercial']);
+
+  // --- Dynamic
+  function addFederationMesh(fed, types){
+    types.forEach(type=>{
+      const roster = GESTALT_BANNED_TYPES.has(type)
+        ? [fed.leader, ...fed.members].filter(id => !isGestalt(id))
+        : [fed.leader, ...fed.members];
+      for(let i=0;i<roster.length;i++){
+        for(let j=i+1;j<roster.length;j++){
+          list.push({a:roster[i], b:roster[j], type});
+        }
+      }
+    });
+  }
+  addFederationMesh(FEDERATIONS.ungoc, ['migration','friendly']);
+  addFederationMesh(FEDERATIONS.scope, ['friendly']);
+
+  // --- Dynamic: Exalted Veny are "tense with ALL MATERIALISTS" ---
   Object.keys(NATIONS).forEach(id=>{
     if(id!=='exalted-veny' && hasEthicSubstr(id,'Materialist')){
       list.push({a:'exalted-veny', b:id, type:'tense'});
