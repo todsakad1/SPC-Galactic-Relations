@@ -84,12 +84,12 @@ const ASSET_DB = {
   // ---- AUTHORITY -------------------------------------------------
   authorities: {
     "Imperial": "https://stellaris.paradoxwikis.com/images/5/56/Auth_imperial.png",
-    "Democracy": "",
-    "Oligarchy": "",
-    "Dictatorship": "",
-    "Hivemind": "",
-    "Machine Intelligence": "",
-    "None": ""
+    "Democracy": "https://stellaris.paradoxwikis.com/images/a/a8/Auth_democratic.png",
+    "Oligarchy": "https://stellaris.paradoxwikis.com/images/6/6a/Auth_oligarchic.png",
+    "Dictatorship": "https://stellaris.paradoxwikis.com/images/3/34/Auth_dictatorial.png",
+    "Hivemind": "https://stellaris.paradoxwikis.com/images/4/43/Auth_hive_mind.png",
+    "Machine Intelligence": "https://stellaris.paradoxwikis.com/images/a/af/Auth_machine_intelligence.png",
+    "None": "https://stellaris.paradoxwikis.com/images/9/96/Auth_bio_corporate_evopred.png"
   },
 
   // ---- ORIGIN --------------------------------------------------
