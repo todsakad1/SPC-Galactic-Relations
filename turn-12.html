@@ -897,9 +897,6 @@ function isGestalt(id){ return hasEthicSubstr(id,'Gestalt'); }
 function buildFinalEdges(){
   const list = EDGES.slice();
 
-function buildFinalEdges(){
-  const list = EDGES.slice();
-
   // Relation types Gestalt-ethic nations can never form. double dipped enforced, i've been dipping in chocolate
   const GESTALT_BANNED_TYPES = new Set(['migration','commercial']);
 
