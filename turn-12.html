@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turn 12 — Galactic Political Relations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --void:#070911;
+  --panel:#0e121b;
+  --panel-2:#121826;
+  --steel:#232a38;
+  --steel-2:#2e3648;
+  --paper:#d8dbe3;
+  --paper-dim:#8b93a3;
+  --amber:#e0a23d;
+  --cyan:#4fd1c5;
+
+  --auth-imperial:#d4574a;
+  --auth-democracy:#4a9eda;
+  --auth-oligarchy:#9b7fd4;
+  --auth-dictatorship:#e2793d;
+  --auth-hivemind:#e0c23c;
+  --auth-machine:#4fd1c5;
+  --auth-none:#7a8290;
+
+  --rel-war:#e0483f;
+  --rel-rivalry:#e0824c;
+  --rel-tense:#e0a83c;
+  --rel-friendly:#6fd66f;
+  --rel-nap:#4a9eda;
+  --rel-defpact:#9b7fd4;
+  --rel-commercial:#e0d23c;
+  --rel-migration:#4fd1c5;
+  --rel-embassy:#cfcfcf;
+  --rel-scion:#d466c2;
+  --rel-guarantee:#8f97a3;
+
+  --font-display:'Orbitron',sans-serif;
+  --font-body:'IBM Plex Sans',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--void);
+  color:var(--paper);
+  font-family:var(--font-body);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(79,209,197,0.05), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(224,162,61,0.05), transparent 40%);
+}
+::selection{ background:var(--amber); color:#1a1400; }
+a{color:var(--cyan);}
+button{
+  font-family:var(--font-body);
+  background:var(--panel-2);
+  color:var(--paper);
+  border:1px solid var(--steel-2);
+  border-radius:3px;
+  padding:6px 10px;
+  font-size:12px;
+  cursor:pointer;
+  letter-spacing:.02em;
+}
+button:hover{ border-color:var(--amber); color:var(--amber); }
+button:focus-visible, input:focus-visible, .card:focus-visible, .legend-row:focus-visible{
+  outline:2px solid var(--amber); outline-offset:2px;
+}
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; transition:none !important; }
+}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+#topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:20px;
+  padding:12px 22px;
+  border-bottom:1px solid var(--steel);
+  background:linear-gradient(180deg, #0a0c13, #070911);
+}
+.topbar-left{ display:flex; align-items:center; gap:16px; min-width:0; }
+#logo-img{
+  width:46px; height:46px; object-fit:contain; flex:0 0 auto;
+  filter:drop-shadow(0 0 6px rgba(224,162,61,.35));
+}
+.logo-fallback{
+  width:46px;height:46px;flex:0 0 auto;border-radius:50%;
+  border:2px solid var(--amber);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display); color:var(--amber); font-size:16px;
+}
+.title-block h1{
+  font-family:var(--font-display);
+  font-size:18px; font-weight:700; letter-spacing:.04em;
+  margin:0 0 3px 0; color:var(--paper);
+  text-transform:uppercase;
+}
+.title-block .stamp{
+  margin:0; font-family:var(--font-mono); font-size:10.5px;
+  letter-spacing:.14em; color:var(--rel-war);
+  border:1px solid rgba(224,72,63,.5); display:inline-block;
+  padding:2px 7px; transform:rotate(-1deg); text-transform:uppercase;
+  background:rgba(224,72,63,.07);
+}
+.topbar-right{ display:flex; align-items:center; gap:10px; flex:0 0 auto; }
+#search-input{
+  background:var(--panel-2); border:1px solid var(--steel-2); color:var(--paper);
+  border-radius:3px; padding:7px 10px; font-family:var(--font-mono); font-size:12px;
+  width:190px;
+}
+#search-input::placeholder{ color:var(--paper-dim); }
+.nation-count{
+  font-family:var(--font-mono); font-size:11px; color:var(--paper-dim);
+  white-space:nowrap;
+}
+.zoom-controls{
+  display:flex; align-items:center; gap:6px;
+  border:1px solid var(--steel-2); border-radius:3px; padding:3px 4px;
+  background:var(--panel-2);
+}
+.zoom-controls button{ padding:3px 9px; }
+#zoom-readout{
+  font-family:var(--font-mono); font-size:11px; color:var(--paper-dim);
+  width:38px; text-align:center; user-select:none;
+}
+
+/* ============================================================
+   APP LAYOUT
+   ============================================================ */
+#app{ display:flex; height:calc(100vh - 71px); overflow:hidden; }
+
+/* ---- Legend (left, collapsible) ---- */
+#legend{
+  flex:0 0 auto; width:270px; overflow:hidden;
+  border-right:1px solid var(--steel);
+  background:var(--panel);
+  transition:width .18s ease;
+  display:flex; flex-direction:column;
+}
+#legend.collapsed{ width:34px; }
+#legend-inner{ width:270px; overflow-y:auto; padding:16px 14px 40px; flex:1; }
+#legend.collapsed #legend-inner{ opacity:0; pointer-events:none; }
+.legend-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 8px; border-bottom:1px solid var(--steel); flex:0 0 auto;
+}
+.legend-header span{
+  font-family:var(--font-display); font-size:11px; letter-spacing:.14em;
+  color:var(--amber); text-transform:uppercase;
+}
+#legend.collapsed .legend-header span{ display:none; }
+#legend-toggle{ padding:4px 7px; }
+.legend-section{ margin-bottom:18px; }
+.legend-section h3{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--paper-dim); margin:0 0 8px;
+  border-bottom:1px dotted var(--steel-2); padding-bottom:5px;
+}
+.legend-row{
+  display:flex; align-items:center; gap:8px; padding:4px 3px;
+  border-radius:3px; cursor:pointer; font-size:12px;
+}
+.legend-row:hover{ background:var(--panel-2); }
+.legend-row input[type=checkbox]{ accent-color:var(--amber); flex:0 0 auto; }
+.swatch-line{ width:22px; height:0; border-top-width:3px; border-top-style:solid; flex:0 0 auto; }
+.swatch-dot{ width:12px; height:12px; border-radius:50%; flex:0 0 auto; border:2px solid #000; }
+.legend-note{
+  font-family:var(--font-mono); font-size:10.5px; color:var(--paper-dim);
+  line-height:1.5; padding:8px 3px 0;
+}
+.halo-demo{
+  width:16px;height:16px;border-radius:3px; background:var(--panel-2); flex:0 0 auto;
+}
+.halo-demo.ai{ box-shadow:0 0 0 2px #000, 0 0 0 3px #4a4f5c; }
+.halo-demo.player{ box-shadow:0 0 0 2px #fff; }
+.halo-demo.unknown{ outline:2px dashed #7a8290; outline-offset:2px; }
+#legend-bulk{ display:flex; gap:6px; margin-bottom:10px;}
+#legend-bulk button{ flex:1; font-size:10.5px; padding:5px 4px; }
+
+/* ---- Canvas viewport (center) ---- */
+#canvas-viewport{ flex:1 1 auto; position:relative; overflow:hidden; }
+#canvas-scroll{ position:absolute; inset:0; overflow:auto; }
+#canvas-inner{
+  position:relative;
+  transform-origin:0 0;
+  display:grid;
+  width:2150px;
+  grid-template-columns:minmax(760px,2.2fr) minmax(340px,1fr);
+  grid-template-areas:
+    "galcomm fallen"
+    "galcomm crisis"
+    "independent uncontacted";
+  gap:26px;
+  padding:34px;
+}
+#edge-layer{ position:absolute; top:0; left:0; pointer-events:none; }
+
+.box{
+  position:relative;
+  border:1px solid var(--steel);
+  border-radius:5px;
+  background:linear-gradient(180deg, rgba(255,255,255,.025), transparent 60%);
+  padding:26px 18px 20px;
+}
+.box-title{
+  position:absolute; top:-12px; left:14px;
+  background:var(--void); padding:0 8px;
+  font-family:var(--font-display); font-size:11.5px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--amber); white-space:nowrap;
+}
+.box-sub{
+  font-family:var(--font-mono); font-size:10px; color:var(--paper-dim);
+  margin:-14px 0 14px 2px;
+}
+.box[data-cat="galcomm"]{ grid-area:galcomm; }
+.box[data-cat="fallen"]{ grid-area:fallen; }
+.box[data-cat="crisis"]{ grid-area:crisis; }
+.box[data-cat="uncontacted"]{ grid-area:uncontacted; }
+.box[data-cat="independent"]{ grid-area:independent; }
+
+.flex-wrap{ display:flex; flex-wrap:wrap; gap:14px; align-items:flex-start; }
+
+/* ---- Nation card ---- */
+.card{
+  --card-auth:#7a8290;
+  position:relative;
+  width:172px; min-height:64px;
+  background:var(--panel);
+  border:1px solid var(--steel-2);
+  border-left:3px solid var(--card-auth);
+  border-radius:3px;
+  padding:9px 10px 8px;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .12s ease, box-shadow .12s ease, opacity .15s ease;
+}
+.card:hover{ transform:translateY(-2px); }
+.card.selected{ box-shadow:0 0 0 2px var(--amber); }
+.card.dimmed{ opacity:.16; }
+.card.match{ box-shadow:0 0 0 2px var(--cyan); }
+.corner{ position:absolute; width:8px; height:8px; border-color:var(--card-auth); opacity:.9; }
+.corner.tl{ top:-1px;left:-1px;border-top:2px solid;border-left:2px solid; }
+.corner.tr{ top:-1px;right:-1px;border-top:2px solid;border-right:2px solid; }
+.corner.bl{ bottom:-1px;left:-1px;border-bottom:2px solid;border-left:2px solid; }
+.corner.br{ bottom:-1px;right:-1px;border-bottom:2px solid;border-right:2px solid; }
+.card-badges{ display:flex; gap:4px; flex-wrap:wrap; margin-bottom:4px; min-height:14px; }
+.mini-badge{
+  font-family:var(--font-mono); font-size:8.5px; letter-spacing:.03em;
+  padding:1px 4px; border-radius:2px; text-transform:uppercase;
+  background:var(--panel-2); color:var(--paper-dim); border:1px solid var(--steel-2);
+}
+.mini-badge.elder{ color:var(--auth-imperial); border-color:var(--auth-imperial); }
+.mini-badge.uncontacted{ color:var(--cyan); border-color:var(--cyan); }
+.card-name{ font-size:12.5px; font-weight:600; line-height:1.25; color:var(--paper); }
+.card-sub{ font-family:var(--font-mono); font-size:9.5px; color:var(--paper-dim); margin-top:3px; }
+
+/* halos */
+.halo-ai{ box-shadow:0 0 0 3px #000000, 0 0 0 5px #4a4f5c; }
+.halo-player{ box-shadow:0 0 0 3px #ffffff; }
+.halo-unknown{ outline:2px dashed #7a8290; outline-offset:3px; }
+.card.selected.halo-ai{ box-shadow:0 0 0 3px #000, 0 0 0 5px #4a4f5c, 0 0 0 7px var(--amber); }
+.card.selected.halo-player{ box-shadow:0 0 0 3px #fff, 0 0 0 5px var(--amber); }
+
+/* ---- Federation cluster (radial) ---- */
+.fed-wrap{ margin-bottom:6px; }
+.fed-cluster{
+  position:relative; width:420px; height:420px; margin:34px auto 6px;
+}
+.fed-ring{
+  position:absolute; inset:36px;
+  border:1px dashed var(--steel-2); border-radius:50%;
+}
+.fed-radar{
+  position:absolute; inset:36px; border-radius:50%; overflow:hidden;
+  opacity:.5;
+}
+.fed-radar::after{
+  content:''; position:absolute; inset:-20%;
+  background:conic-gradient(from 0deg, transparent 0deg, rgba(224,162,61,.16) 18deg, transparent 40deg);
+  animation:sweep 14s linear infinite;
+}
+@keyframes sweep{ to{ transform:rotate(360deg); } }
+.fed-label{
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em;
+  color:var(--paper-dim); text-align:center; width:100%;
+  cursor:pointer; z-index:4; padding:3px 0;
+}
+.fed-label:hover{ color:var(--amber); text-decoration:underline; }
+.fed-cluster .card{ position:absolute; }
+.fed-cluster .card.is-leader{
+  width:150px; z-index:3; box-shadow:0 0 0 2px var(--amber), 0 0 18px rgba(224,162,61,.25);
+}
+.fed-associates{ display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:2px; }
+.fed-associates .card{ opacity:.92; }
+
+/* ---- Description box (floating, top-right) ---- */
+#description-box{
+  position:absolute; top:16px; right:16px; width:300px; z-index:10;
+  background:rgba(14,18,27,.94); border:1px solid var(--steel-2); border-radius:5px;
+  backdrop-filter:blur(3px);
+}
+.desc-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 12px; cursor:pointer; border-bottom:1px solid var(--steel);
+}
+.desc-header span{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--amber);
+}
+#description-body{ padding:12px 12px 14px; font-size:12.5px; line-height:1.55; color:var(--paper); max-height:260px; overflow-y:auto; }
+#description-box.collapsed #description-body{ display:none; }
+#description-box.collapsed .desc-header{ border-bottom:none; }
+
+/* ---- Info panel (right, slide-in) ---- */
+#info-panel{
+  flex:0 0 auto; width:0; overflow:hidden;
+  border-left:1px solid var(--steel);
+  background:var(--panel);
+  transition:width .2s ease;
+}
+#info-panel.open{ width:360px; }
+#info-inner{ width:360px; height:100%; overflow-y:auto; padding:0 0 40px; }
+.info-header{
+  padding:16px 18px 12px; border-bottom:1px solid var(--steel);
+  position:sticky; top:0; background:var(--panel); z-index:2;
+}
+.info-header-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.info-name{ font-family:var(--font-display); font-size:16px; color:var(--paper); margin:0; text-transform:uppercase; letter-spacing:.03em; }
+.info-formal{ font-family:var(--font-mono); font-size:11px; color:var(--paper-dim); margin:4px 0 0; font-style:italic; }
+#info-close{ flex:0 0 auto; }
+.info-section{ padding:14px 18px; border-bottom:1px solid var(--steel); }
+.info-section h4{
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--paper-dim); margin:0 0 9px;
+}
+.info-meta-grid{ display:grid; grid-template-columns:auto 1fr; gap:5px 12px; font-size:12px; }
+.info-meta-grid dt{ color:var(--paper-dim); }
+.info-meta-grid dd{ margin:0; }
+.tag-row{ display:flex; flex-wrap:wrap; gap:6px; }
+.tag{
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--panel-2); border:1px solid var(--steel-2); border-radius:3px;
+  padding:4px 8px; font-size:11.5px;
+}
+.tag img{ width:14px; height:14px; object-fit:contain; }
+.redacted{
+  font-family:var(--font-mono); background:#050505; color:#3c3f47;
+  padding:1px 7px; border-radius:2px; letter-spacing:.06em;
+}
+.badge-pill{
+  display:inline-block; font-family:var(--font-mono); font-size:10px;
+  padding:3px 8px; border-radius:10px; margin:0 5px 5px 0;
+  border:1px solid var(--amber); color:var(--amber); text-transform:uppercase; letter-spacing:.04em;
+}
+.desc-text{ font-size:12.5px; line-height:1.6; color:var(--paper); white-space:pre-wrap; }
+.desc-placeholder{ font-size:12px; color:var(--paper-dim); font-style:italic; }
+.rel-list{ display:flex; flex-direction:column; gap:6px; }
+.rel-item{
+  display:flex; align-items:center; gap:8px; font-size:12px;
+  padding:5px 7px; border-radius:3px; cursor:pointer; border:1px solid transparent;
+}
+.rel-item:hover{ background:var(--panel-2); border-color:var(--steel-2); }
+.rel-dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
+.rel-type-label{ color:var(--paper-dim); font-family:var(--font-mono); font-size:9.5px; margin-left:auto; text-transform:uppercase; }
+.empty-note{ font-size:11.5px; color:var(--paper-dim); font-style:italic; }
+
+/* scrollbars */
+#legend-inner::-webkit-scrollbar, #canvas-scroll::-webkit-scrollbar, #info-inner::-webkit-scrollbar{ width:9px; height:9px; }
+#legend-inner::-webkit-scrollbar-thumb, #canvas-scroll::-webkit-scrollbar-thumb, #info-inner::-webkit-scrollbar-thumb{
+  background:var(--steel-2); border-radius:5px;
+}
+
+footer#file-footer{
+  font-family:var(--font-mono); font-size:9.5px; color:var(--paper-dim);
+  text-align:center; padding:6px; border-top:1px solid var(--steel);
+}
+</style>
+</head>
+<body>
+
+<header id="topbar">
+  <div class="topbar-left">
+    <img id="logo-img" alt="Coalition seal" style="display:none;">
+    <div class="logo-fallback" id="logo-fallback">◈</div>
+    <div class="title-block">
+      <h1>Turn 12 — Galactic Political Relations</h1>
+      <p class="stamp">Authorised for Publication by the Psyche Division</p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="nation-count" id="nation-count"></span>
+    <input id="search-input" type="text" placeholder="Search nations…" autocomplete="off">
+    <div class="zoom-controls">
+      <button id="zoom-out-btn" title="Zoom out">−</button>
+      <span id="zoom-readout">100%</span>
+      <button id="zoom-in-btn" title="Zoom in">+</button>
+      <button id="zoom-reset-btn" title="Reset zoom">Reset</button>
+    </div>
+    <button id="clear-focus-btn" title="Clear selection / search">Clear</button>
+    <button id="redraw-btn" title="Recompute connection lines (use if lines look off after resizing)">Redraw Lines</button>
+  </div>
+</header>
+
+<div id="app">
+
+  <aside id="legend">
+    <div class="legend-header">
+      <span>Legend</span>
+      <button id="legend-toggle" title="Collapse legend">‹</button>
+    </div>
+    <div id="legend-inner">
+
+      <div id="legend-bulk">
+        <button id="legend-all">Show all</button>
+        <button id="legend-none">Hide all</button>
+      </div>
+
+      <div class="legend-section">
+        <h3>Controller (card halo)</h3>
+        <div class="legend-row"><span class="halo-demo ai"></span> AI-controlled nation</div>
+        <div class="legend-row"><span class="halo-demo player"></span> Player-controlled nation</div>
+        <div class="legend-row"><span class="halo-demo unknown"></span> Unknown / unconfirmed</div>
+      </div>
+
+      <div class="legend-section">
+        <h3>Authority (card colour)</h3>
+        <div class="legend-row"><span class="swatch-dot" style="background:var(--auth-imperial)"></span> Imperial</div>
+        <div class="legend-row"><span class="swatch-dot" style="background:var(--auth-democracy)"></span> Democracy</div>
+        <div class="legend-row"><span class="swatch-dot" style="background:var(--auth-oligarchy)"></span> Oligarchy</div>
+        <div class="legend-row"><span class="swatch-dot" style="background:var(--auth-dictatorship)"></span> Dictatorship</div>
+        <div class="legend-row"><span class="swatch-dot" style="background:var(--auth-hivemind)"></span> Hivemind</div>
+        <div class="legend-row"><span class="swatch-dot" style="background:var(--auth-machine)"></span> Machine Intelligence</div>
+        <div class="legend-row"><span class="swatch-dot" style="background:var(--auth-none)"></span> None / no data</div>
+      </div>
+
+      <div class="legend-section">
+        <h3>Relations (click to toggle)</h3>
+        <div id="legend-relations"></div>
+        <p class="legend-note">All diplomatic lines are two-way except <b>Guarantee of Independence</b>, which is one-way (arrowhead points to the guarantor). Gestalt-ethic nations cannot hold Migration Pacts under any circumstance — this is enforced automatically regardless of what's typed into the data file.</p>
+      </div>
+
+    </div>
+  </aside>
+
+  <main id="canvas-viewport">
+    <div id="canvas-scroll">
+      <div id="canvas-inner">
+        <svg id="edge-layer"><defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"></path>
+          </marker>
+        </defs></svg>
+
+        <div class="box" data-cat="galcomm">
+          <div class="box-title">Galactic Community</div>
+          <div class="box-sub">Recognised member states of the wider galactic order</div>
+          <div class="flex-wrap" id="galcomm-slot"></div>
+        </div>
+
+        <div class="box" data-cat="fallen">
+          <div class="box-title">Ancients &amp; Fallen Empires</div>
+          <div class="box-sub">Origin auto-set to Elder Race</div>
+          <div class="flex-wrap" id="fallen-slot"></div>
+        </div>
+
+        <div class="box" data-cat="crisis">
+          <div class="box-title">Crisis</div>
+          <div class="box-sub">Entities &amp; countermeasures</div>
+          <div class="flex-wrap" id="crisis-slot"></div>
+        </div>
+
+        <div class="box" data-cat="independent">
+          <div class="box-title">Independent</div>
+          <div class="box-sub">Unaligned with the Galactic Community</div>
+          <div class="flex-wrap" id="independent-slot"></div>
+        </div>
+
+        <div class="box" data-cat="uncontacted">
+          <div class="box-title">Uncontacted Nations</div>
+          <div class="box-sub">No data on record</div>
+          <div class="flex-wrap" id="uncontacted-slot"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="description-box">
+      <div class="desc-header" id="desc-toggle">
+        <span>Chart Notes</span>
+        <span id="desc-caret">▾</span>
+      </div>
+      <div id="description-body"></div>
+    </div>
+  </main>
+
+  <aside id="info-panel">
+    <div id="info-inner"></div>
+  </aside>
+
+</div>
+
+<footer id="file-footer">turn12-galactic-political-relations.html · SPC · edit nation data directly in this file, image icons in assets-database.js</footer>
+
+<script src="assets-database.js"></script>
+<script>
+/* ============================================================
+   EDIT THESE TWO LINES for your own branding
+   ============================================================ */
+const LOGO_URL = "";              // <<< PUT YOUR GOC LOGO IMAGE URL HERE >>>
+const CHART_DESCRIPTION =
+`Write your Turn 12 summary / changelog here.
+
+This box's text comes from the CHART_DESCRIPTION constant near
+the top of the <script> in this file — edit it directly and
+re-save. (There's no backend, so anything typed live in a
+browser can't be shared with anyone else viewing this page —
+only what's actually saved in the file gets seen by others.)`;
+
+/* ============================================================
+   NATION DATA
+   controller: 'ai' | 'player' | 'unknown'
+   category:   'galcomm' | 'fallen' | 'crisis' | 'uncontacted' | 'independent'
+   ============================================================ */
+const NATIONS = {
+  'exalted-veny': { name:'Exalted Veny', formal:null, controller:'ai', category:'galcomm',
+    location:'NW Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Spiritualist','Authoritarian'],
+    civics:['Philosopher King','Masterful Crafters'],
+    origin:'Imperial Fiefdom', authority:'Imperial',
+    badges:['Galactic Custodian'], description:'' },
+
+  'sentinel-order': { name:'Sentinel Order', formal:null, controller:'ai', category:'crisis',
+    location:'[NO DATA]', nationType:'Crisis Countermeasure',
+    ethics:[], civics:[], origin:'[NO DATA]', authority:'None',
+    badges:[], description:'' },
+
+  'xaazaine': { name:'Xaazaine Watchers', formal:null, controller:'ai', category:'fallen',
+    location:'NW Caldera', nationType:'Fallen Empire',
+    ethics:['Fanatic Spiritualist'],
+    civics:['Empire in Decline','Lethargic Leadership'],
+    origin:'Elder Race', authority:'Imperial',
+    badges:[], description:'' },
+
+  'ayani': { name:'Ayani Forerunners', formal:null, controller:'ai', category:'fallen',
+    location:'SW Caldera', nationType:'Fallen Empire',
+    ethics:['Fanatic Xenophile'],
+    civics:['Empire in Decline','Lethargic Leadership'],
+    origin:'Elder Race', authority:'Imperial',
+    badges:[], description:'' },
+
+  'vespers': { name:'Vespers Vestige', formal:null, controller:'ai', category:'fallen',
+    location:'N Caldera', nationType:'Fallen Empire', uncontacted:true,
+    ethics:['Fanatic Xenophobe'],
+    civics:['Empire in Decline','Lethargic Leadership'],
+    origin:'Elder Race', authority:'Imperial',
+    badges:[], description:'' },
+
+  'imari': { name:'Imari Conservers', formal:null, controller:'ai', category:'fallen',
+    location:'SE Caldera', nationType:'Fallen Empire',
+    ethics:['Fanatic Materialist'],
+    civics:['Empire in Decline','Lethargic Leadership'],
+    origin:'Elder Race', authority:'Imperial',
+    badges:[], description:'' },
+
+  'zelkran': { name:'Zelkran Continuance', formal:null, controller:'ai', category:'fallen',
+    location:'S Caldera', nationType:'Fallen Empire',
+    ethics:['Gestalt Consciousness'],
+    civics:['Custodian Matrix','Fallen Machine Intelligence'],
+    origin:'Elder Race', authority:'Machine Intelligence',
+    badges:['Relations: [DATA EXPUNGED]'], description:'' },
+
+  'collective-stupid': { name:'Collective of Stupid Ca', formal:null, controller:'ai', category:'fallen',
+    location:'E Caldera', nationType:'Fallen Empire', uncontacted:true,
+    ethics:['Gestalt Consciousness'],
+    civics:['Fragmented Command','Hyper-aggressive Drones'],
+    origin:'Elder Race', authority:'Hivemind',
+    badges:[], description:'' },
+
+  'collective-logical': { name:'Collective of Logical Ca', formal:null, controller:'ai', category:'fallen',
+    location:'E Caldera', nationType:'Fallen Empire', uncontacted:true,
+    ethics:['Gestalt Consciousness'],
+    civics:['Fragmented Command','Unstable Drones'],
+    origin:'Elder Race', authority:'Hivemind',
+    badges:[], description:'' },
+
+  'collective-smart': { name:'Collective of Smart Ca', formal:null, controller:'ai', category:'fallen',
+    location:'E Caldera', nationType:'Fallen Empire', uncontacted:true,
+    ethics:['Gestalt Consciousness'],
+    civics:['Fragmented Command','Stunted Drones'],
+    origin:'Elder Race', authority:'Hivemind',
+    badges:[], description:'' },
+
+  'lahhal': { name:'Lahhal Consciousness', formal:null, controller:'unknown', category:'uncontacted',
+    location:'Approx. NE Caldera', nationType:'Normal Nation', uncontacted:true,
+    ethics:[], civics:[], origin:'[NO DATA]', authority:'None',
+    badges:[], description:'' },
+
+  'galvanador': { name:'Galvanador', formal:'Imperium of Galvanador', controller:'unknown', category:'uncontacted',
+    location:'Approx. NE Caldera', nationType:'Normal Nation', uncontacted:true,
+    ethics:[], civics:[], origin:'[NO DATA]', authority:'None',
+    badges:[], description:'' },
+
+  'cuh-concord': { name:'Cuh Concord', formal:null, controller:'unknown', category:'uncontacted',
+    location:'Approx. E Caldera', nationType:'Normal Nation', uncontacted:true,
+    ethics:[], civics:[], origin:'[NO DATA]', authority:'None',
+    badges:[], description:'' },
+
+  'whitesworth': { name:'Whitesworth', formal:'Lordship of Whitesworth', controller:'unknown', category:'uncontacted',
+    location:'Approx. W Caldera', nationType:'Normal Nation', uncontacted:true,
+    ethics:[], civics:[], origin:'[NO DATA]', authority:'None',
+    badges:[], description:'' },
+
+  'teapots': { name:'Teapots of Utopia', formal:null, controller:'player', category:'galcomm',
+    location:'SW Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Xenophile','Spiritualist'],
+    civics:['Galactic Curators','Crusader Spirit'],
+    origin:'Starlit Pilgrimmage', authority:'Imperial',
+    badges:[], description:'' },
+
+  'radiant': { name:'Radiant', formal:null, controller:'player', category:'galcomm',
+    location:'N Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Militarist','Materialist'],
+    civics:['Technocracy','Masterful Crafters'],
+    origin:'Throne of Stars', authority:'Imperial',
+    badges:[], description:'' },
+
+  'ashikam': { name:'Ashikam Collective', formal:'Ashikam Collective Consciousness', controller:'player', category:'galcomm',
+    location:'SE Caldera', nationType:'Normal Nation',
+    ethics:['Gestalt Consciousness'],
+    civics:['[DATA EXPUNGED]'],
+    origin:'[DATA EXPUNGED]', authority:'Hivemind',
+    badges:[], description:'' },
+
+  'celestararchatean': { name:'Celestararchatean Empire', formal:'Holy Remnants of Celestararchatean Empire', controller:'ai', category:'crisis',
+    location:'[NO DATA]', nationType:'Crisis Entity',
+    ethics:['Gestalt Consciousness'],
+    civics:[],
+    origin:'Subspace Vanguard', authority:'Hivemind',
+    badges:[], description:'' },
+
+  'malaysia': { name:'Malaysia', formal:'Northern Republic of Malaysia', controller:'player', category:'galcomm',
+    location:'NW Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Xenophobe','Egalitarian'],
+    civics:['Maid Nation','[DATA EXPUNGED]'],
+    origin:'[DATA EXPUNGED]', authority:'Democracy',
+    badges:[], description:'' },
+
+  'singapore': { name:'Singapore', formal:'Southern Republic of Singapore', controller:'player', category:'galcomm',
+    location:'NW Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Pacifist','Egalitarian'],
+    civics:['[DATA EXPUNGED]'],
+    origin:'[DATA EXPUNGED]', authority:'Democracy',
+    badges:[], description:'' },
+
+  'yaochi': { name:'Yaochi', formal:'Dynasty of Yaochi', controller:'player', category:'galcomm',
+    location:'SW Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Pacifist','Egalitarian'],
+    civics:['[DATA EXPUNGED]'],
+    origin:'[DATA EXPUNGED]', authority:'Democracy',
+    badges:[], description:'' },
+
+  'neko': { name:'New Era Keeping Order', formal:null, controller:'player', category:'galcomm',
+    location:'E Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Militarist','Materialist'],
+    civics:['Relentless Industrialists','Reanimators'],
+    origin:'Post Apocalyptic', authority:'Imperial',
+    badges:[], description:'' },
+
+  'igseis': { name:'Igseis', formal:null, controller:'player', category:'galcomm',
+    location:'SW Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Xenophile','Materialist'],
+    civics:['[DATA EXPUNGED]'],
+    origin:'Syncretic Evolution', authority:'Oligarchy',
+    badges:[], description:'' },
+
+  'sharpia': { name:'Sharpia', formal:null, controller:'player', category:'galcomm',
+    location:'NW Caldera', nationType:'Normal Nation',
+    ethics:['Egalitarian','Materialist','Militarist'],
+    civics:['Technocracy','Beacon of Liberty'],
+    origin:'Scion', authority:'Democracy',
+    badges:[], description:'' },
+
+  'neutrekiana': { name:'Neutrekiana', formal:null, controller:'player', category:'independent',
+    location:'N Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Xenophobe','Militarist'],
+    civics:['Fanatic Purifiers','Reanimators'],
+    origin:'Endbringers', authority:'Oligarchy',
+    badges:['Hostile Independent'], description:'' },
+
+  'index': { name:'The Index', formal:'Pathwalkers of the Index', controller:'player', category:'galcomm',
+    location:'NW Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Pacifist','Xenophobe'],
+    civics:['Meritocracy','Ascensionists','[DATA EXPUNGED]'],
+    origin:'[DATA EXPUNGED]', authority:'Oligarchy',
+    badges:[], description:'' },
+
+  'paul': { name:'Paul', formal:null, controller:'player', category:'galcomm',
+    location:'SW Caldera', nationType:'Normal Nation',
+    ethics:['Fanatic Materialist','Authoritarian'],
+    civics:['Corvee System','Technocracy'],
+    origin:'Prosperous Unification', authority:'Dictatorship',
+    badges:[], description:'' }
+};
+
+/* ============================================================
+   FEDERATIONS  (leader is drawn centre-of-cluster automatically)
+   ============================================================ */
+/* ============================================================
+   FEDERATIONS  (leader is drawn centre-of-cluster automatically)
+   govType: shown as a badge on the federation card/panel — edit
+            freely, it's just a label (e.g. 'Hegemony').
+   description: shown in the federation's info panel, same idea
+            as a nation's description field — write it directly
+            here, not live in the browser (see notes elsewhere
+            in this file re: static-site persistence).
+   ============================================================ */
+const FEDERATIONS = {
+  ungoc: { id:'ungoc', name:'Union of Nations: Galactic Occult Coalition', short:'UN:GOC',
+    govType:'Hegemony', description:'',
+    leader:'singapore', members:['radiant','malaysia','ashikam','neko','index'], associates:['exalted-veny'] },
+  scope: { id:'scope', name:'Southwest Co-Prosperity Entente', short:'S.C.O.P.E.',
+    govType:'Holy Covenant', description:'',
+    leader:'teapots', members:['yaochi','igseis'], associates:[] }
+};
+
+/* ============================================================
+   EXPLICIT RELATION EDGES  — yes, you edit this by hand.
+   ------------------------------------------------------------
+   Every line is one relationship: {a:'id', b:'id', type:'...'}.
+   - Order of a/b doesn't matter — every type here is drawn as
+     two-way EXCEPT 'guarantee-independence', which is drawn
+     one-way (arrow points at the guarantor, i.e. a -> b means
+     "a guarantees b's independence").
+   - To ADD a relation: add a new {a:'id1', b:'id2', type:'...'}
+     line anywhere in this array.
+   - To REMOVE a relation: delete its line. If it was one of the
+     dynamically-computed ones (see buildFinalEdges() below —
+     the UN:GOC "migrate with all members" web, the "tense with
+     all Materialists" web, the "tense with all Galactic
+     Community members" web) you can't remove a single instance
+     of it here since it isn't written here at all; edit the
+     ethic/category driving it instead, or add a specific
+     exclusion in buildFinalEdges().
+   - Nation ids are the lowercase-hyphen keys used in NATIONS
+     above (e.g. 'exalted-veny', 'singapore'). To point a
+     relation at an entire federation instead of one nation, use
+     'fed:ungoc' or 'fed:scope' (see FEDERATIONS above) — this
+     is how "at war with the whole federation" is expressed
+     without drawing six separate lines.
+   - Valid type values (must match a RELATION_TYPES id below):
+     'war', 'rivalry', 'tense', 'friendly', 'nap-associate',
+     'defensive-pact', 'commercial', 'migration', 'embassy',
+     'scion', 'guarantee-independence'.
+   - Duplicates across two nations' own write-ups are fine — they
+     get de-duplicated automatically. "Patronizing"→friendly and
+     "Angry"→tense have already been applied here per your rule.
+   - A nation that belongs to a federation (leader/member/
+     associate) automatically INHERITS any relation written
+     against 'fed:ungoc' / 'fed:scope' — e.g. Singapore's own
+     info panel will show "War with Celestararchatean Empire
+     (via UN:GOC)" even though no line below mentions Singapore
+     directly. You don't need to (and shouldn't) also add an
+     individual edge for every member — that's what the fed:
+     shorthand is for.
+   ============================================================ */
+const EDGES = [
+  // Exalted Veny
+  {a:'exalted-veny', b:'fed:ungoc', type:'nap-associate'},
+  {a:'exalted-veny', b:'teapots', type:'embassy'},
+  {a:'exalted-veny', b:'teapots', type:'migration'},
+  {a:'exalted-veny', b:'singapore', type:'embassy'},
+  {a:'exalted-veny', b:'singapore', type:'migration'},
+  {a:'exalted-veny', b:'singapore', type:'commercial'},
+  {a:'exalted-veny', b:'malaysia', type:'embassy'},
+  {a:'exalted-veny', b:'malaysia', type:'migration'},
+  {a:'exalted-veny', b:'malaysia', type:'commercial'},
+
+  // Sentinel Order
+  {a:'sentinel-order', b:'celestararchatean', type:'war'},
+
+  // Xaazaine Watchers
+  {a:'xaazaine', b:'singapore', type:'friendly'},
+  {a:'xaazaine', b:'sharpia', type:'tense'},
+  {a:'xaazaine', b:'neutrekiana', type:'tense'},
+  {a:'xaazaine', b:'celestararchatean', type:'tense'},
+
+  // Ayani Forerunners
+  {a:'ayani', b:'singapore', type:'friendly'},
+  {a:'ayani', b:'teapots', type:'friendly'},
+  {a:'ayani', b:'neutrekiana', type:'tense'},
+  {a:'ayani', b:'celestararchatean', type:'war'},
+
+  // Vespers Vestige
+  {a:'vespers', b:'singapore', type:'friendly'},
+  {a:'vespers', b:'neutrekiana', type:'tense'},
+  {a:'vespers', b:'celestararchatean', type:'tense'},
+
+  // Imari Conservers
+  {a:'imari', b:'sharpia', type:'friendly'},
+  {a:'imari', b:'singapore', type:'friendly'},
+  {a:'imari', b:'neutrekiana', type:'tense'},
+  {a:'imari', b:'celestararchatean', type:'war'},
+  {a:'sharpia', b:'imari', type:'scion'},
+
+  // Zelkran Continuance — [DATA EXPUNGED], intentionally no edges
+
+  // Collective of Stupid Ca
+  {a:'collective-stupid', b:'singapore', type:'friendly'},
+  {a:'collective-stupid', b:'neutrekiana', type:'tense'},
+  {a:'collective-stupid', b:'celestararchatean', type:'tense'},
+
+  // Collective of Logical Ca
+  {a:'collective-logical', b:'singapore', type:'friendly'},
+  {a:'collective-logical', b:'neutrekiana', type:'tense'},
+  {a:'collective-logical', b:'celestararchatean', type:'tense'},
+
+  // Collective of Smart Ca
+  {a:'collective-smart', b:'neutrekiana', type:'tense'},
+  {a:'collective-smart', b:'celestararchatean', type:'tense'},
+
+  // Teapots of Utopia
+  {a:'teapots', b:'igseis', type:'migration'},
+  {a:'teapots', b:'malaysia', type:'migration'},
+  {a:'teapots', b:'singapore', type:'migration'},
+  {a:'teapots', b:'index', type:'migration'},
+  {a:'teapots', b:'sharpia', type:'migration'},
+  {a:'teapots', b:'yaochi', type:'migration'},
+  {a:'teapots', b:'igseis', type:'embassy'},
+  {a:'teapots', b:'malaysia', type:'embassy'},
+  {a:'teapots', b:'singapore', type:'embassy'},
+  {a:'teapots', b:'sharpia', type:'embassy'},
+  {a:'teapots', b:'yaochi', type:'embassy'},
+
+  // Ashikam Collective
+  {a:'ashikam', b:'yaochi', type:'embassy'},
+  {a:'ashikam', b:'igseis', type:'embassy'},
+  {a:'ashikam', b:'neko', type:'embassy'},
+
+  // Celestararchatean Empire
+  {a:'celestararchatean', b:'fed:scope', type:'war'},
+  {a:'celestararchatean', b:'fed:ungoc', type:'war'},
+  {a:'celestararchatean', b:'exalted-veny', type:'war'},
+
+  // Malaysia
+  {a:'malaysia', b:'yaochi', type:'embassy'},
+  {a:'malaysia', b:'index', type:'embassy'},
+  {a:'malaysia', b:'singapore', type:'embassy'},
+  {a:'malaysia', b:'igseis', type:'embassy'},
+
+  // Singapore
+  {a:'singapore', b:'radiant', type:'embassy'},
+  {a:'singapore', b:'index', type:'embassy'},
+  {a:'singapore', b:'yaochi', type:'embassy'},
+  {a:'singapore', b:'sharpia', type:'embassy'},
+  {a:'singapore', b:'igseis', type:'embassy'},
+  {a:'singapore', b:'igseis', type:'migration'},
+  {a:'singapore', b:'igseis', type:'commercial'},
+
+  // Yaochi
+  {a:'yaochi', b:'igseis', type:'commercial'}
+];
+
+/* ============================================================
+   RELATION TYPE METADATA
+   ============================================================ */
+const RELATION_TYPES = [
+  {id:'war', label:'War', color:'#e0483f', dash:'', width:3, arrow:false},
+  {id:'rivalry', label:'Rivalry', color:'#e0824c', dash:'7,4', width:2, arrow:false},
+  {id:'tense', label:'Tense', color:'#e0a83c', dash:'4,4', width:1.5, arrow:false},
+  {id:'friendly', label:'Friendly', color:'#6fd66f', dash:'', width:1.5, arrow:false},
+  {id:'nap-associate', label:'NAP / Federation Associate', color:'#4a9eda', dash:'2,3', width:2, arrow:false},
+  {id:'defensive-pact', label:'Defensive Pact', color:'#9b7fd4', dash:'', width:2, arrow:false},
+  {id:'commercial', label:'Commercial Pact', color:'#e0d23c', dash:'1,4', width:1.5, arrow:false},
+  {id:'migration', label:'Migration Pact', color:'#4fd1c5', dash:'', width:1.5, arrow:false},
+  {id:'embassy', label:'Embassy', color:'#cfcfcf', dash:'1,3', width:1, arrow:false},
+  {id:'scion', label:'Scion', color:'#d466c2', dash:'', width:2, arrow:true},
+  {id:'guarantee-independence', label:'Guarantee of Independence', color:'#8f97a3', dash:'5,3', width:1.5, arrow:true}
+];
+const REL_META = Object.fromEntries(RELATION_TYPES.map(r=>[r.id,r]));
+
+const AUTHORITY_COLORS = {
+  'Imperial':'#d4574a','Democracy':'#4a9eda','Oligarchy':'#9b7fd4','Dictatorship':'#e2793d',
+  'Hivemind':'#e0c23c','Machine Intelligence':'#4fd1c5','None':'#7a8290'
+};
+
+/* ============================================================
+   ENGINE
+   ============================================================ */
+function hasEthicSubstr(id, substr){
+  const n = NATIONS[id];
+  return !!n && n.ethics.some(e => e.includes(substr));
+}
+function isGestalt(id){ return hasEthicSubstr(id,'Gestalt'); }
+
+function buildFinalEdges(){
+  const list = EDGES.slice();
+
+  // --- Dynamic: UN:GOC "migration pacts with all UN:GOC members" ---
+  // (excludes Ashikam — Gestalt-banned from migration, overrules its own claim)
+  const fed = FEDERATIONS.ungoc;
+  const roster = [fed.leader, ...fed.members].filter(id => !isGestalt(id));
+  for(let i=0;i<roster.length;i++){
+    for(let j=i+1;j<roster.length;j++){
+      list.push({a:roster[i], b:roster[j], type:'migration'});
+    }
+  }
+
+  // --- Dynamic: Exalted Veny "tense with ALL MATERIALISTS" ---
+  Object.keys(NATIONS).forEach(id=>{
+    if(id!=='exalted-veny' && hasEthicSubstr(id,'Materialist')){
+      list.push({a:'exalted-veny', b:id, type:'tense'});
+    }
+  });
+
+  // --- Dynamic: Neutrekiana "tense with all Galactic Community members" ---
+  Object.keys(NATIONS).forEach(id=>{
+    if(id!=='neutrekiana' && NATIONS[id].category==='galcomm'){
+      list.push({a:'neutrekiana', b:id, type:'tense'});
+    }
+  });
+
+  // --- De-duplicate (order-independent on a/b) ---
+  const seen = new Set();
+  const deduped = [];
+  for(const e of list){
+    const key = [e.a,e.b].sort().join('~') + '~' + e.type;
+    if(seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(e);
+  }
+
+  // --- HARD RULE: Gestalt nations can never hold Migration Pacts.
+  //     Overrules everything else, including explicit data-entry mistakes. ---
+  return deduped.filter(e=>{
+    if(e.type!=='migration') return true;
+    const aG = e.a.startsWith('fed:') ? false : isGestalt(e.a);
+    const bG = e.b.startsWith('fed:') ? false : isGestalt(e.b);
+    return !aG && !bG;
+  });
+}
+const FINAL_EDGES = buildFinalEdges();
+
+function assetLookup(bucket, label){
+  try{
+    const url = ASSET_DB && ASSET_DB[bucket] && ASSET_DB[bucket][label];
+    return url ? url : null;
+  }catch(e){ return null; }
+}
+function renderTag(bucket, label){
+  if(label==='[DATA EXPUNGED]' || label==='[NO DATA]'){
+    return `<span class="tag"><span class="redacted">${label}</span></span>`;
+  }
+  const icon = assetLookup(bucket, label);
+  return `<span class="tag">${icon?`<img src="${icon}" alt="">`:''}${escapeHtml(label)}</span>`;
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function cardHTML(id){
+  const n = NATIONS[id];
+  const haloClass = n.controller==='ai' ? 'halo-ai' : n.controller==='player' ? 'halo-player' : 'halo-unknown';
+  const authColor = AUTHORITY_COLORS[n.authority] || AUTHORITY_COLORS['None'];
+  const badges = [];
+  if(n.nationType==='Fallen Empire') badges.push('<span class="mini-badge elder">Elder Race</span>');
+  if(n.uncontacted) badges.push('<span class="mini-badge uncontacted">Uncontacted</span>');
+  return `<div class="card ${haloClass}" id="card-${id}" data-id="${id}" style="--card-auth:${authColor}" tabindex="0" role="button" aria-label="${escapeHtml(n.name)}">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="card-badges">${badges.join('')}</div>
+      <div class="card-name">${escapeHtml(n.name)}</div>
+      <div class="card-sub">${escapeHtml(n.authority)} · ${escapeHtml(n.location)}</div>
+    </div>`;
+}
+
+function buildFederationCluster(fedKey){
+  const fed = FEDERATIONS[fedKey];
+  const wrap = document.createElement('div');
+  wrap.className = 'fed-wrap';
+
+  const cluster = document.createElement('div');
+  cluster.className = 'fed-cluster';
+  cluster.innerHTML = `
+    <div class="fed-radar"></div>
+    <div class="fed-ring"></div>
+    <div class="fed-label">${fed.short} — ${escapeHtml(fed.name)}${fed.govType ? ` · ${escapeHtml(fed.govType)}` : ''}</div>
+  `;
+
+  // leader, centred
+  const leaderDiv = document.createElement('div');
+  leaderDiv.innerHTML = cardHTML(fed.leader);
+  const leaderCard = leaderDiv.firstElementChild;
+  leaderCard.classList.add('is-leader');
+  leaderCard.style.left = '50%';
+  leaderCard.style.top = '50%';
+  leaderCard.style.transform = 'translate(-50%,-50%)';
+  cluster.appendChild(leaderCard);
+
+  // members, arranged in a ring
+  const radius = 150;
+  const cx = 210, cy = 210;
+  fed.members.forEach((mid, i)=>{
+    const angle = (i / fed.members.length) * Math.PI * 2 - Math.PI/2;
+    const div = document.createElement('div');
+    div.innerHTML = cardHTML(mid);
+    const card = div.firstElementChild;
+    card.style.left = (cx + radius*Math.cos(angle)) + 'px';
+    card.style.top = (cy + radius*Math.sin(angle)) + 'px';
+    card.style.transform = 'translate(-50%,-50%)';
+    cluster.appendChild(card);
+  });
+
+  cluster.querySelector('.fed-label').addEventListener('click', ()=> focusFederation(fedKey));
+  wrap.appendChild(cluster);
+
+  if(fed.associates.length){
+    const assocRow = document.createElement('div');
+    assocRow.className = 'fed-associates';
+    fed.associates.forEach(aid=>{
+      assocRow.insertAdjacentHTML('beforeend', cardHTML(aid));
+    });
+    wrap.appendChild(assocRow);
+  }
+  return wrap;
+}
+
+function renderCanvas(){
+  const fedMemberIds = new Set();
+  Object.values(FEDERATIONS).forEach(f=>{
+    fedMemberIds.add(f.leader);
+    f.members.forEach(m=>fedMemberIds.add(m));
+    f.associates.forEach(a=>fedMemberIds.add(a));
+  });
+
+  const slots = {
+    galcomm: document.getElementById('galcomm-slot'),
+    fallen: document.getElementById('fallen-slot'),
+    crisis: document.getElementById('crisis-slot'),
+    uncontacted: document.getElementById('uncontacted-slot'),
+    independent: document.getElementById('independent-slot')
+  };
+
+  // federation clusters go first inside the galcomm box
+  slots.galcomm.appendChild(buildFederationCluster('ungoc'));
+  slots.galcomm.appendChild(buildFederationCluster('scope'));
+
+  Object.keys(NATIONS).forEach(id=>{
+    const n = NATIONS[id];
+    if(n.category==='galcomm' && fedMemberIds.has(id)) return; // already drawn in a cluster
+    const slot = slots[n.category];
+    if(slot) slot.insertAdjacentHTML('beforeend', cardHTML(id));
+  });
+
+  document.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click', ()=> focusNation(card.dataset.id));
+    card.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); focusNation(card.dataset.id); } });
+  });
+
+  document.getElementById('nation-count').textContent = Object.keys(NATIONS).length + ' nations charted';
+}
+
+/* ---- Edge drawing ---- */
+function resolveEl(id){
+  if(id.startsWith('fed:')){
+    const fed = FEDERATIONS[id.split(':')[1]];
+    return document.getElementById('card-'+fed.leader);
+  }
+  return document.getElementById('card-'+id);
+}
+function centerOf(el, refRect, scale){
+  const r = el.getBoundingClientRect();
+  // getBoundingClientRect reflects the current CSS transform scale; divide
+  // it back out so the coordinate written into the (transform-invariant)
+  // SVG viewBox is always in native/unscaled units. See zoom engine below.
+  return { x: (r.left - refRect.left + r.width/2) / scale, y: (r.top - refRect.top + r.height/2) / scale };
+}
+let hiddenTypes = new Set();
+
+function drawEdges(){
+  const svg = document.getElementById('edge-layer');
+  const canvasInner = document.getElementById('canvas-inner');
+  const w = canvasInner.scrollWidth, h = canvasInner.scrollHeight;
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.querySelectorAll('.rel-group').forEach(g=>g.remove());
+  const refRect = canvasInner.getBoundingClientRect();
+
+  const groups = {};
+  RELATION_TYPES.forEach(rt=>{
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','rel-group rel-'+rt.id);
+    if(hiddenTypes.has(rt.id)) g.style.display='none';
+    svg.appendChild(g);
+    groups[rt.id] = g;
+  });
+
+  FINAL_EDGES.forEach((e,i)=>{
+    const elA = resolveEl(e.a), elB = resolveEl(e.b);
+    if(!elA || !elB) return;
+    const pA = centerOf(elA, refRect, zoomScale), pB = centerOf(elB, refRect, zoomScale);
+    const meta = REL_META[e.type];
+    if(!meta) return;
+    const mx = (pA.x+pB.x)/2, my = (pA.y+pB.y)/2;
+    const dx = pB.x-pA.x, dy = pB.y-pA.y;
+    const dist = Math.hypot(dx,dy) || 1;
+    const perpX = -dy/dist, perpY = dx/dist;
+    const bend = (i % 2 === 0 ? 1 : -1) * Math.min(38, dist*0.14);
+    const cx = mx + perpX*bend, cy = my + perpY*bend;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M ${pA.x} ${pA.y} Q ${cx} ${cy} ${pB.x} ${pB.y}`);
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke', meta.color);
+    path.setAttribute('stroke-width', meta.width);
+    if(meta.dash) path.setAttribute('stroke-dasharray', meta.dash);
+    path.setAttribute('stroke-linecap','round');
+    path.setAttribute('opacity', '0.68');
+    path.dataset.a = e.a; path.dataset.b = e.b; path.dataset.type = e.type;
+    if(meta.arrow) path.setAttribute('marker-end','url(#arrow)');
+    groups[e.type].appendChild(path);
+  });
+
+  // drawEdges() rebuilds every <path> from scratch, which would otherwise
+  // silently wipe out whatever focus highlighting was applied by
+  // focusNation()/focusFederation() the moment a redraw fires (window
+  // resize, legend toggle, the manual button, etc). Re-apply it here so a
+  // stray redraw can never un-highlight the current selection.
+  if(selectedId){
+    setPathEmphasis(p => p.dataset.a===selectedId || p.dataset.b===selectedId);
+  }
+}
+let redrawTimer=null;
+function scheduleRedraw(){ clearTimeout(redrawTimer); redrawTimer=setTimeout(drawEdges, 120); }
+
+/* ---- Zoom ----
+   canvas-inner is scaled with CSS transform (transform-origin: 0 0).
+   scrollWidth/scrollHeight and offsetLeft/offsetTop-based measurements
+   are unaffected by CSS transforms, so the SVG (drawn in native/
+   unscaled units, see centerOf() above) stays correctly aligned at any
+   zoom level without needing to be redrawn when the zoom changes —
+   only actual layout changes (resize, panel collapse) need a redraw.
+   zoomTo() keeps whatever native point was under the cursor (or the
+   viewport centre, for the +/- buttons) fixed on screen while scaling. */
+let zoomScale = 1;
+const ZOOM_MIN = 0.35, ZOOM_MAX = 2, ZOOM_STEP = 0.15;
+
+function zoomTo(nextScale, localX, localY){
+  nextScale = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, nextScale));
+  const scroller = document.getElementById('canvas-scroll');
+  const canvasInner = document.getElementById('canvas-inner');
+
+  // native (unscaled) point currently under (localX, localY)
+  const nativeX = (scroller.scrollLeft + localX) / zoomScale;
+  const nativeY = (scroller.scrollTop + localY) / zoomScale;
+
+  zoomScale = nextScale;
+  canvasInner.style.transform = `scale(${zoomScale})`;
+
+  scroller.scrollLeft = nativeX * zoomScale - localX;
+  scroller.scrollTop = nativeY * zoomScale - localY;
+
+  document.getElementById('zoom-readout').textContent = Math.round(zoomScale*100) + '%';
+}
+function zoomAtViewportCenter(delta){
+  const scroller = document.getElementById('canvas-scroll');
+  const r = scroller.getBoundingClientRect();
+  zoomTo(zoomScale + delta, r.width/2, r.height/2);
+}
+document.getElementById('zoom-in-btn').addEventListener('click', ()=> zoomAtViewportCenter(ZOOM_STEP));
+document.getElementById('zoom-out-btn').addEventListener('click', ()=> zoomAtViewportCenter(-ZOOM_STEP));
+document.getElementById('zoom-reset-btn').addEventListener('click', ()=>{
+  const scroller = document.getElementById('canvas-scroll');
+  const r = scroller.getBoundingClientRect();
+  zoomTo(1, r.width/2, r.height/2);
+});
+document.getElementById('canvas-scroll').addEventListener('wheel', (e)=>{
+  if(!(e.ctrlKey || e.metaKey)) return; // plain wheel still scrolls normally
+  e.preventDefault();
+  const r = e.currentTarget.getBoundingClientRect();
+  const delta = e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP;
+  zoomTo(zoomScale + delta, e.clientX - r.left, e.clientY - r.top);
+}, { passive:false });
+
+/* ---- Legend ---- */
+function buildRelationLegend(){
+  const box = document.getElementById('legend-relations');
+  RELATION_TYPES.forEach(rt=>{
+    const row = document.createElement('label');
+    row.className = 'legend-row';
+    row.innerHTML = `<input type="checkbox" checked data-type="${rt.id}">
+      <span class="swatch-line" style="border-top-color:${rt.color}; ${rt.dash?'border-top-style:dashed;':''}"></span>
+      ${rt.label}`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const t = cb.dataset.type;
+      if(cb.checked) hiddenTypes.delete(t); else hiddenTypes.add(t);
+      const g = document.querySelector('.rel-'+t);
+      if(g) g.style.display = cb.checked ? '' : 'none';
+    });
+  });
+}
+document.getElementById('legend-all').addEventListener('click', ()=>{
+  hiddenTypes.clear();
+  document.querySelectorAll('#legend-relations input').forEach(cb=>cb.checked=true);
+  document.querySelectorAll('.rel-group').forEach(g=>g.style.display='');
+});
+document.getElementById('legend-none').addEventListener('click', ()=>{
+  RELATION_TYPES.forEach(rt=>hiddenTypes.add(rt.id));
+  document.querySelectorAll('#legend-relations input').forEach(cb=>cb.checked=false);
+  document.querySelectorAll('.rel-group').forEach(g=>g.style.display='none');
+});
+
+/* ---- Info panel / focus ---- */
+let selectedId = null;
+
+function federationsOf(id){
+  return Object.values(FEDERATIONS).filter(f => f.leader===id || f.members.includes(id) || f.associates.includes(id));
+}
+
+// Direct bilateral relations for a nation, PLUS relations it inherits by
+// belonging to a federation that has its own federation-level relation
+// (e.g. a war declared on 'fed:ungoc' as a whole is inherited by every
+// UN:GOC leader/member/associate individually, tagged "via UN:GOC").
+function relationsFor(id){
+  const direct = FINAL_EDGES
+    .filter(e=>e.a===id || e.b===id)
+    .map(e=>{
+      const otherRaw = e.a===id ? e.b : e.a;
+      const isFed = otherRaw.startsWith('fed:');
+      const other = isFed ? FEDERATIONS[otherRaw.split(':')[1]] : NATIONS[otherRaw];
+      return { type:e.type, otherId: otherRaw, otherName: isFed ? (other.short) : other.name, isFed, via:null };
+    });
+
+  const directKeys = new Set(direct.map(r=>r.otherId+'~'+r.type));
+  const inherited = [];
+  federationsOf(id).forEach(fed=>{
+    FINAL_EDGES.forEach(e=>{
+      const fedTag = 'fed:'+fed.id;
+      if(e.a!==fedTag && e.b!==fedTag) return;
+      const otherRaw = e.a===fedTag ? e.b : e.a;
+      if(otherRaw===id) return;
+      // skip if this exact (target, type) is already shown as a direct relation
+      if(directKeys.has(otherRaw+'~'+e.type)) return;
+      const isFed = otherRaw.startsWith('fed:');
+      const other = isFed ? FEDERATIONS[otherRaw.split(':')[1]] : NATIONS[otherRaw];
+      inherited.push({ type:e.type, otherId:otherRaw, otherName: isFed ? other.short : other.name, isFed, via: fed.short });
+    });
+  });
+
+  return [...direct, ...inherited];
+}
+
+// Relations belonging to the federation itself (not any one member).
+// nap-associate edges are excluded here since associates are already
+// listed individually in their own section of the federation panel.
+function relationsForFederation(fedKey){
+  const tag = 'fed:'+fedKey;
+  return FINAL_EDGES.filter(e=>(e.a===tag || e.b===tag) && e.type!=='nap-associate').map(e=>{
+    const otherRaw = e.a===tag ? e.b : e.a;
+    const isFed = otherRaw.startsWith('fed:');
+    const other = isFed ? FEDERATIONS[otherRaw.split(':')[1]] : NATIONS[otherRaw];
+    return { type:e.type, otherId:otherRaw, otherName: isFed ? other.short : other.name, isFed };
+  });
+}
+// Shared line-emphasis logic used by focusNation / focusFederation / clearFocus
+// (and re-applied by drawEdges() itself — see note there). Lines touching the
+// selection stay at full colour/opacity; everything else keeps its real
+// colour but fades well back so it reads as background, not noise.
+function setPathEmphasis(touchTest){
+  document.querySelectorAll('.rel-group path').forEach(p=>{
+    const touches = touchTest(p);
+    p.style.opacity = touches ? '0.95' : '0.1';
+    p.style.strokeWidth = touches ? (parseFloat(p.getAttribute('stroke-width'))+0.6) : p.getAttribute('stroke-width');
+  });
+}
+function resetPathEmphasis(){
+  document.querySelectorAll('.rel-group path').forEach(p=>{
+    p.style.opacity = '0.68';
+    p.style.strokeWidth = p.getAttribute('stroke-width');
+  });
+}
+
+function focusNation(id){
+  selectedId = id;
+  const n = NATIONS[id];
+
+  // highlight cards
+  const related = new Set([id]);
+  relationsFor(id).forEach(r=>{ if(!r.isFed) related.add(r.otherId); });
+  document.querySelectorAll('.card').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.id===id);
+    c.classList.toggle('dimmed', !related.has(c.dataset.id));
+  });
+  setPathEmphasis(p => p.dataset.a===id || p.dataset.b===id);
+
+  renderInfoPanel(id);
+  document.getElementById('info-panel').classList.add('open');
+}
+function clearFocus(){
+  selectedId = null;
+  document.querySelectorAll('.card').forEach(c=>{ c.classList.remove('selected','dimmed'); });
+  resetPathEmphasis();
+  document.getElementById('info-panel').classList.remove('open');
+  document.getElementById('search-input').value='';
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('match'));
+}
+
+function renderInfoPanel(id){
+  const n = NATIONS[id];
+  const authColor = AUTHORITY_COLORS[n.authority] || AUTHORITY_COLORS['None'];
+  const haloLabel = n.controller==='ai' ? 'AI-controlled' : n.controller==='player' ? 'Player-controlled' : 'Unknown / unconfirmed';
+
+  const badgesHtml = (n.badges||[]).map(b=>`<span class="badge-pill">${escapeHtml(b)}</span>`).join('');
+
+  const ethicsHtml = n.ethics.length
+    ? `<div class="tag-row">${n.ethics.map(e=>renderTag('ethics',e)).join('')}</div>`
+    : `<span class="empty-note">No ethics on record.</span>`;
+  const civicsHtml = n.civics.length
+    ? `<div class="tag-row">${n.civics.map(c=>renderTag('civics',c)).join('')}</div>`
+    : `<span class="empty-note">No civics on record.</span>`;
+  const authorityHtml = `<div class="tag-row">${renderTag('authorities', n.authority)}</div>`;
+  const originHtml = `<div class="tag-row">${renderTag('origins', n.origin)}</div>`;
+
+  const rels = relationsFor(id);
+  const relHtml = rels.length ? `<div class="rel-list">${rels.map(r=>{
+    const meta = REL_META[r.type];
+    return `<div class="rel-item" data-jump="${r.isFed?'':r.otherId}">
+        <span class="rel-dot" style="background:${meta.color}"></span>
+        ${escapeHtml(r.otherName)}${r.via?` <span style="color:var(--paper-dim); font-style:italic;">(via ${escapeHtml(r.via)})</span>`:''}
+        <span class="rel-type-label">${meta.label}</span>
+      </div>`;
+  }).join('')}</div>` : `<span class="empty-note">No recorded relations.</span>`;
+
+  const descHtml = n.description
+    ? `<div class="desc-text">${escapeHtml(n.description)}</div>`
+    : `<div class="desc-placeholder">No dossier entry filed yet. Write one into this nation's "description" field in the NATIONS data object.</div>`;
+
+  document.getElementById('info-inner').innerHTML = `
+    <div class="info-header">
+      <div class="info-header-row">
+        <div>
+          <h3 class="info-name" style="border-left:4px solid ${authColor}; padding-left:8px;">${escapeHtml(n.name)}</h3>
+          ${n.formal ? `<p class="info-formal">${escapeHtml(n.formal)}</p>` : ''}
+        </div>
+        <button id="info-close" title="Close">✕</button>
+      </div>
+      ${badgesHtml ? `<div style="margin-top:10px;">${badgesHtml}</div>` : ''}
+    </div>
+
+    <div class="info-section">
+      <h4>Overview</h4>
+      <dl class="info-meta-grid">
+        <dt>Controller</dt><dd>${haloLabel}</dd>
+        <dt>Location</dt><dd>${escapeHtml(n.location)}</dd>
+        <dt>Nation Type</dt><dd>${escapeHtml(n.nationType)}</dd>
+      </dl>
+    </div>
+
+    <div class="info-section"><h4>Ethics</h4>${ethicsHtml}</div>
+    <div class="info-section"><h4>Civics</h4>${civicsHtml}</div>
+    <div class="info-section"><h4>Authority</h4>${authorityHtml}</div>
+    <div class="info-section"><h4>Origin</h4>${originHtml}</div>
+    <div class="info-section"><h4>Dossier</h4>${descHtml}</div>
+    <div class="info-section"><h4>Relations</h4>${relHtml}</div>
+  `;
+
+  document.getElementById('info-close').addEventListener('click', clearFocus);
+  document.querySelectorAll('.rel-item[data-jump]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const jid = el.dataset.jump;
+      if(jid) focusNation(jid);
+    });
+  });
+}
+
+function focusFederation(fedKey){
+  selectedId = 'fed:'+fedKey;
+  const fed = FEDERATIONS[fedKey];
+  const roster = new Set([fed.leader, ...fed.members, ...fed.associates]);
+  const tag = 'fed:'+fedKey;
+
+  document.querySelectorAll('.card').forEach(c=>{
+    c.classList.remove('selected');
+    c.classList.toggle('dimmed', !roster.has(c.dataset.id));
+  });
+  setPathEmphasis(p => p.dataset.a===tag || p.dataset.b===tag);
+
+  renderFederationInfoPanel(fedKey);
+  document.getElementById('info-panel').classList.add('open');
+}
+
+function renderFederationInfoPanel(fedKey){
+  const fed = FEDERATIONS[fedKey];
+  const rosterRow = (id, roleLabel) => {
+    const n = NATIONS[id];
+    const authColor = AUTHORITY_COLORS[n.authority] || AUTHORITY_COLORS['None'];
+    return `<div class="rel-item" data-jump="${id}">
+        <span class="rel-dot" style="background:${authColor}"></span>
+        ${escapeHtml(n.name)}
+        <span class="rel-type-label">${roleLabel}</span>
+      </div>`;
+  };
+
+  const extRels = relationsForFederation(fedKey);
+  const extHtml = extRels.length ? `<div class="rel-list">${extRels.map(r=>{
+    const meta = REL_META[r.type];
+    return `<div class="rel-item" data-jump="${r.isFed?'':r.otherId}">
+        <span class="rel-dot" style="background:${meta.color}"></span>
+        ${escapeHtml(r.otherName)}
+        <span class="rel-type-label">${meta.label}</span>
+      </div>`;
+  }).join('')}</div>` : `<span class="empty-note">No federation-level relations on record.</span>`;
+
+  document.getElementById('info-inner').innerHTML = `
+    <div class="info-header">
+      <div class="info-header-row">
+        <div>
+          <h3 class="info-name" style="border-left:4px solid var(--amber); padding-left:8px;">${escapeHtml(fed.short)}</h3>
+          <p class="info-formal">${escapeHtml(fed.name)}</p>
+        </div>
+        <button id="info-close" title="Close">✕</button>
+      </div>
+      <div style="margin-top:10px;">
+        <span class="badge-pill">${escapeHtml(fed.govType || 'Federation')}</span>
+        <span class="badge-pill">${fed.members.length+1} full member${fed.members.length ? 's':''}</span>
+        ${fed.associates.length ? `<span class="badge-pill">${fed.associates.length} associate${fed.associates.length>1?'s':''}</span>` : ''}
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h4>Charter</h4>
+      ${fed.description
+        ? `<div class="desc-text">${escapeHtml(fed.description)}</div>`
+        : `<div class="desc-placeholder">No charter/description filed yet. Write one into this federation's "description" field in the FEDERATIONS data object.</div>`}
+    </div>
+
+    <div class="info-section">
+      <h4>Leader</h4>
+      <div class="rel-list">${rosterRow(fed.leader,'Leader')}</div>
+    </div>
+
+    <div class="info-section">
+      <h4>Members</h4>
+      <div class="rel-list">${fed.members.map(id=>rosterRow(id,'Member')).join('') || '<span class="empty-note">No other full members.</span>'}</div>
+    </div>
+
+    ${fed.associates.length ? `<div class="info-section">
+      <h4>Associates (NAP)</h4>
+      <div class="rel-list">${fed.associates.map(id=>rosterRow(id,'Associate')).join('')}</div>
+    </div>` : ''}
+
+    <div class="info-section">
+      <h4>External Relations</h4>
+      ${extHtml}
+    </div>
+  `;
+
+  document.getElementById('info-close').addEventListener('click', clearFocus);
+  document.querySelectorAll('.rel-item[data-jump]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const jid = el.dataset.jump;
+      if(jid) focusNation(jid);
+    });
+  });
+}
+
+/* ---- Search ---- */
+document.getElementById('search-input').addEventListener('input', (e)=>{
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('match'));
+  if(!q) return;
+  document.querySelectorAll('.card').forEach(c=>{
+    const n = NATIONS[c.dataset.id];
+    const hay = (n.name + ' ' + (n.formal||'')).toLowerCase();
+    if(hay.includes(q)) c.classList.add('match');
+  });
+});
+document.getElementById('search-input').addEventListener('keydown', (e)=>{
+  if(e.key==='Enter'){
+    const first = document.querySelector('.card.match');
+    if(first) first.scrollIntoView({behavior:'smooth', block:'center', inline:'center'});
+  }
+});
+
+/* ---- Collapsibles ---- */
+document.getElementById('legend-toggle').addEventListener('click', ()=>{
+  const el = document.getElementById('legend');
+  el.classList.toggle('collapsed');
+  document.getElementById('legend-toggle').textContent = el.classList.contains('collapsed') ? '›' : '‹';
+  scheduleRedraw();
+});
+document.getElementById('desc-toggle').addEventListener('click', ()=>{
+  const box = document.getElementById('description-box');
+  box.classList.toggle('collapsed');
+  document.getElementById('desc-caret').textContent = box.classList.contains('collapsed') ? '▸' : '▾';
+});
+
+document.getElementById('clear-focus-btn').addEventListener('click', clearFocus);
+document.getElementById('redraw-btn').addEventListener('click', drawEdges);
+window.addEventListener('resize', scheduleRedraw);
+
+/* ---- Boot ---- */
+function init(){
+  if(LOGO_URL){
+    document.getElementById('logo-img').src = LOGO_URL;
+    document.getElementById('logo-img').style.display = 'block';
+    document.getElementById('logo-fallback').style.display = 'none';
+  }
+  document.getElementById('description-body').textContent = CHART_DESCRIPTION;
+  buildRelationLegend();
+  renderCanvas();
+  requestAnimationFrame(()=>{ drawEdges(); });
+}
+document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('load', scheduleRedraw);
+</script>
+</body>
+</html>
